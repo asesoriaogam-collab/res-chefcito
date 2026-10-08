@@ -95,3 +95,14 @@ Special thanks to **AhMyth**, from whose project I referred and learned many con
 
 ---
 **Keywords**: Android RAT, Remote Administration Tool, C2 Server, Node.js, Java Android, Malware Analysis, Security Research, APK Builder, RAT Dashboard.
+
+## Panel: capa visual overrides.css
+
+- `server/public/overrides.css` agrega refinamiento visual (glow, hover, scrollbars, focus visible) sin tocar `client.js` ni IDs.
+- Enlazada al final de `<head>` en `server/public/index.html`; gana por orden de cascada sobre el `<style>` embebido.
+- Para desactivarla basta borrar la linea `<link rel="stylesheet" href="/overrides.css">` del index.html.
+
+## Listener del C2 (puerto 7777)
+
+- El listener es dinamico: `server.js` lo abre al recibir el evento socket.io `start_listener` (boton del panel).
+- Tras `systemctl restart curse` el puerto no persiste; reabrirlo con `node ~/Curse_Rat/server/start_listener.js`.
