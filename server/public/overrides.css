@@ -1,0 +1,631 @@
+/* ════════════════════════════════════════════════════════════════
+   overrides.css — CHEFCITO  |  capa de anulación final (se carga
+   SIEMPRE después de theme.css en index.html y en UI/*.html).
+   Solo overrides: no se alteran IDs, jerarquía DOM ni la lógica de
+   socket.io / client.js. El C2 sigue inyectando datos en los mismos
+   elementos.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─── 0. ERRADICACIÓN DEL CORAL/ROJO + NEGRO ABSOLUTO ───────────
+   Las páginas UI pisan el :root de theme.css con paleta rojiza propia
+   (--panel rgba(10,0,0..), --border rgba(180,0,0..), --red #cc0000,
+   --green-ok #00ff88, fuentes Share Tech Mono/Orbitron). Aquí se
+   re-fijan TODAS con los valores sobrios de theme.css. */
+:root {
+  /* Paleta base sobria (idéntica a theme.css) */
+  --bg:            #0a0c0f;
+  --bg2:           #0e1116;
+  --bg3:           #13171d;
+  --panel:         #10141a;
+  --panel-2:       #161b22;
+  --border:        #232a34;
+  --border-dim:    #1a2029;
+  --border-strong: #2f3844;
+  --text:          #d6dce4;
+  --text-dim:      #8a94a2;
+  --text-faint:    #5a6472;
+  --accent:        #8ea6bd;
+  --accent-dim:    rgba(142, 166, 189, 0.12);
+  --ok:            #3fb950;
+  --green-ok:      #3fb950;
+
+  /* Tipografía legible (anula Share Tech Mono / Orbitron de las páginas) */
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* Alias legacy neutralizados */
+  --danger:        var(--accent);      /* coral #e05661 → gris acero */
+  --danger-dim:    var(--accent-dim);
+  --danger-border: var(--border-strong);
+  --red:           var(--border-strong);
+  --red-bright:    var(--accent);      /* STOP / threat / offline */
+  --red-dim:       var(--text-faint);
+  --red-glow:      transparent;
+  --primary:       var(--accent);
+}
+
+/* El iframe-view venía con fondo #000 inline */
+#iframe-view { background: var(--bg) !important; }
+
+/* ─── 1. WORDMARK / IDENTIDAD ─────────────────────────────────── */
+#wordmark {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+#wordmark span { color: var(--text); font-weight: 700; }
+
+/* ─── 2. TIPOGRAFÍA PARA PROYECCIÓN EN AULA ───────────────────── */
+.panel-title,
+.section-title,
+.section-heading,
+.panel-label,
+.info-col-title,
+.sub-panel-title,
+#topbar-title,
+#nav2-header {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.stat-label { font-size: 13px; }
+
+.stat-value,
+#sys-info-box,
+.notif-item {
+  font-size: 15px;
+  font-family: var(--font-mono);
+}
+
+/* Datos dinámicos, contadores, puertos y logs: mono y legibles */
+.notif-time,
+#clock,
+#status-bar,
+.status-item,
+.log-line,
+#port-display,
+#build-log,
+#online-count,
+#port-count,
+#sent-packets, #sent-bytes, #sent-rate,
+#recv-packets, #recv-bytes, #recv-rate,
+#sys-cpu, #sys-ram, #sys-uptime,
+#threat-level,
+#sms-list, #keylog-list, #notification-list, #contacts-list,
+#fm-list, #device-info-view, #location-info {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+/* ─── 3. RE-ESTRUCTURACIÓN DEL DASHBOARD (HOME) ───────────────── */
+/* #dash-body se aplana (display:contents) para poder mezclar su
+   panel de notificaciones en la fila 2 junto a SYSTEM y LOCATION,
+   sin mover nodos del DOM ni tocar IDs. */
+#home-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 2fr);
+  grid-template-rows: auto auto;
+  gap: 15px;
+}
+
+#dash-body { display: contents; }
+
+/* Fila 1 — SYSTEM MONITOR: 100% ancho, compacto */
+#monitor-panel {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  width: 100%;
+}
+
+#sys-info-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Fila 2 — tira horizontal elástica */
+#stats-bar {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: 100%;
+  gap: 12px;
+}
+
+/* Métricas de tráfico de red fuera de la interfaz */
+#stats-bar > .stat-card:nth-child(2),
+#stats-bar > .stat-card:nth-child(3) { display: none !important; }
+
+/* Proporciones: SYSTEM elástico, LOCATION angosto */
+#stats-bar > .stat-card:nth-child(1) { flex: 1 1 0; min-width: 0; }
+#stats-bar > .location-card { flex: 0 0 clamp(170px, 26%, 250px); min-width: 150px; }
+
+/* RECENT NOTIFICATIONS: reubicado a la fila 2, el bloque más ancho */
+#dash-body > .side-panel:not(#monitor-panel) {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+#dash-body > .side-panel:not(#monitor-panel) .notif-list { max-height: 300px; }
+
+/* LOCATION: sin dots, texto limpio hacia la izquierda */
+.loc-dot { display: none !important; }
+.location-item { justify-content: flex-start; text-align: left; gap: 6px; }
+.location-list { gap: 8px; }
+#location-list .loc-name {
+  color: var(--text) !important;     /* pisa el rojo inline del JS */
+  font-size: 14px !important;        /* pisa el 8px inline del JS */
+  text-align: left;
+}
+
+/* ─── 4. RECUADRO INTERACTIVO DE PUERTOS ──────────────────────── */
+#port-display {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg3);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 12px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+#port-display::after {
+  content: "\25BC";
+  font-size: 8px;
+  color: var(--text-faint);
+  margin-left: 8px;
+}
+#port-display:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none !important;
+}
+
+/* Dropdown de puertos: estética sobria */
+#port-dropdown {
+  background: var(--panel-2);
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-mono);
+}
+.pd-label { color: var(--text-faint); font-size: 12px; letter-spacing: 1px; }
+#active-ports-list { font-family: var(--font-mono); font-size: 12px; }
+
+/* ─── 5. PESTAÑA CLIENTES ─────────────────────────────────────── */
+/* Re-parenting puro CSS: se aplanan los contenedores y se recolocan
+   sus hijos con grid. Se respeta el orden pedido:
+   izquierda = lista + acciones 2x2 + DOWNLOAD/UPLOAD
+   derecha   = consola + grilla de comandos */
+#body {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: stretch;
+}
+
+#client-list-panel,
+#controls-panel,
+#bottom-controls { display: contents !important; }
+
+#client-list-panel > .panel-label { grid-area: 1 / 1 / 2 / 2; }
+#client-list                      { grid-area: 2 / 1 / 3 / 2; min-height: 0; }
+#action-btns {
+  grid-area: 3 / 1 / 4 / 2;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+#bottom-bar         { grid-area: 4 / 1 / 5 / 2; display: flex; gap: 8px; }
+#output-area        { grid-area: 1 / 2 / 4 / 3; min-height: 0; }
+#icon-grid-wrapper  { grid-area: 4 / 2 / 5 / 3; }
+
+/* Los 4 botones de pestañas (Block Client / Phone info / Client
+   Folder / unCheck client): gris oscuro técnico + mono */
+.action-btn {
+  background: var(--bg3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 4px;
+  color: var(--text) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+  padding: 10px 6px !important;
+  min-height: 40px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.action-btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* DOWNLOAD / UPLOAD */
+.bottom-btn {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-height: 40px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.bottom-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Grilla de 12 comandos */
+#icon-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.feat-btn {
+  width: auto !important;
+  height: auto !important;
+  min-height: 54px;
+  aspect-ratio: unset;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--bg3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.feat-btn svg { width: 20px; height: 20px; fill: var(--text-dim); }
+.feat-btn:hover { border-color: var(--accent) !important; }
+.feat-btn.active {
+  background: var(--accent-dim) !important;
+  border-color: var(--accent) !important;
+}
+.feat-btn.active svg { fill: var(--green-ok) !important; }
+
+/* Carteles de etiqueta eliminados a pedido del usuario: los botones
+   de comandos muestran solo su icono. */
+.feat-tip { display: none !important; }
+
+/* Visor principal (Output Area) */
+#output-area {
+  background: var(--panel) !important;
+  border: 1px solid var(--border-strong) !important;
+  overflow: auto;
+}
+#output-area::before {
+  content: "[ CONSOLE_OUTPUT_STREAM ]";
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-faint);
+  background: var(--panel-2);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+/* Tablas (SMS, logs): legibles a distancia + filas cebreadas sutiles */
+#output-area table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+#output-area td,
+#output-area th {
+  padding: 6px 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+#output-area tr:nth-child(even),
+#output-area .data-row:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+
+/* Flujos multimedia: nunca desbordan */
+#output-area img,
+#output-area video,
+#output-area canvas {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ─── 7. BUILD APK: FORMULARIOS + NAV2 + BOTÓN FINAL ──────────── */
+/* Inputs / selects / textareas: gris oscuro mate, sin rojo */
+.form-input,
+.form-select,
+.form-textarea,
+#content-body input,
+#content-body select,
+#content-body textarea,
+#new-port-input {
+  background: var(--bg3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 4px !important;
+  color: var(--text) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+.form-input:focus,
+.form-select:focus,
+#content-body input:focus,
+#content-body select:focus,
+#content-body textarea:focus {
+  border-color: var(--accent) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease;
+}
+.form-label {
+  color: var(--text-dim) !important;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.form-action-btn {
+  background: var(--bg3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 4px;
+  color: var(--accent) !important;
+  font-family: var(--font-mono);
+}
+.form-action-btn:hover { border-color: var(--accent) !important; }
+
+/* Cajas de lista (DNS / permisos) */
+.dns-list-box,
+#perm-list,
+.perm-list,
+#dns-entries,
+#perms-dropdown {
+  background: var(--bg3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.perm-entry,
+.dns-entry,
+.sub-row {
+  border-color: var(--border-strong) !important;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Submenú lateral #nav2 */
+.nav2-btn {
+  background: transparent !important;
+  border: none !important;
+  border-left: 2px solid transparent !important;
+  color: var(--text-dim) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+.nav2-btn:hover {
+  background: var(--accent-dim) !important;
+  border-left-color: var(--accent) !important;
+  color: var(--text) !important;
+}
+.nav2-btn.active {
+  background: var(--accent-dim) !important;
+  border-left-color: var(--accent) !important;
+  color: var(--text) !important;
+}
+
+/* Botón final BUILD APK */
+#start-build-btn,
+.build-btn {
+  background: var(--panel-2) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 4px;
+  color: var(--text) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+#start-build-btn:hover,
+.build-btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* Checkboxes / selectores de permisos */
+#content-body input[type="checkbox"],
+#content-body input[type="radio"] { accent-color: var(--accent); }
+
+/* ─── 5b. RONDA 2: ROJOS LITERALES EN CLASES DE LAS PÁGINAS ──────
+   La ronda 1 neutralizó variables; estos usan rgba(...,0,0,..) directo. */
+
+/* CLIENTS ── barra superior, búsqueda y selección */
+#topbar { background: var(--panel) !important; }
+#select-all-wrap.checked .sa-box {
+  background: var(--accent-dim) !important;
+  border-color: var(--accent) !important;
+}
+#search-input { background: var(--bg3) !important; }
+#search-input::placeholder { color: var(--text-faint) !important; }
+#search-btn { background: var(--bg3) !important; }
+#search-btn:hover { background: var(--accent-dim) !important; color: var(--text) !important; }
+
+/* CLIENTS ── lista de clientes y su menú contextual */
+.panel-label { border-bottom-color: var(--border-strong) !important; }
+.client-card { border-bottom-color: var(--border) !important; }
+.client-card:hover {
+  background: var(--accent-dim) !important;
+  border-left-color: var(--accent) !important;
+}
+.client-card.selected {
+  background: var(--accent-dim) !important;
+  box-shadow: none !important;
+}
+.cc-flag {
+  background: var(--bg3) !important;
+  border-color: var(--border-strong) !important;
+}
+.cc-dots:hover { background: var(--accent-dim) !important; color: var(--text) !important; }
+.cc-dropdown { background: var(--panel-2) !important; }
+.cc-dropdown-item { border-bottom-color: var(--border) !important; }
+.cc-dropdown-item:hover { background: var(--accent-dim) !important; color: var(--text) !important; }
+
+/* CLIENTS ── estados vacíos (antes rgba(80,0,0)) */
+#client-list-empty,
+#output-empty { color: var(--text-faint) !important; }
+#client-list-empty svg,
+#output-empty svg { fill: var(--text-faint) !important; }
+
+/* CLIENTS ── franja inferior, acciones y grilla de comandos */
+#bottom-controls { background: var(--panel-2) !important; }
+.action-btn:hover { background: var(--accent-dim) !important; box-shadow: none !important; }
+#icon-grid {
+  background: var(--bg3) !important;
+  border-color: var(--border-strong) !important;
+  box-shadow: none !important;
+}
+
+/* BUILD ── navegación lateral y topbar */
+#nav2 { background: var(--panel) !important; }
+#content-topbar { background: var(--panel) !important; }
+
+/* BUILD ── formulario y spinners */
+.form-group { border-bottom-color: var(--border) !important; }
+.spinner-arrows { border-left-color: var(--border) !important; }
+.spinner-up, .spinner-dn { background: var(--bg3) !important; }
+.spinner-up:hover, .spinner-dn:hover {
+  background: var(--accent-dim) !important;
+  color: var(--text) !important;
+}
+.form-toggle.checked .toggle-box {
+  background: var(--accent-dim) !important;
+  border-color: var(--accent) !important;
+}
+.tag-badge {
+  background: var(--accent-dim) !important;
+  border-color: var(--border-strong) !important;
+}
+
+/* BUILD ── listas DNS / permisos / log */
+.dns-entry { border-bottom-color: var(--border) !important; }
+.dns-list-box .dns-header { border-bottom-color: var(--border) !important; }
+.perm-list-box {
+  background: var(--bg3) !important;
+  border-color: var(--border-strong) !important;
+}
+.perm-entry { border-bottom-color: var(--border) !important; }
+.perm-entry:hover { background: var(--accent-dim) !important; }
+.perm-entry.selected {
+  background: var(--accent-dim) !important;
+  color: var(--text) !important;
+}
+.perm-remove-btn { background: var(--bg3) !important; }
+.perm-remove-btn:hover { background: var(--accent-dim) !important; }
+.build-log-box {
+  border-color: var(--border-strong) !important;
+  background: var(--bg3) !important;
+  color: var(--text-dim) !important;
+}
+
+/* BUILD ── status bar y marquesina */
+#status-bar { background: var(--panel-2) !important; }
+#scroll-inner { color: var(--text-faint) !important; }
+
+/* BUILD ── divisores puestos inline en el HTML (rgba(80,0,0,0.2)) */
+#page-layout div[style*="rgba(80,0,0"] { border-color: var(--border-strong) !important; }
+
+/* ─── 6. RESPONSIVIDAD CRÍTICA (MÓVILES ≤768px) ───────────────── */
+@media (max-width: 768px) {
+
+  html, body { overflow-x: hidden; }
+
+  /* Dashboard: una sola columna */
+  #home-view {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  #monitor-panel { grid-column: 1; grid-row: auto; }
+  #stats-bar {
+    grid-column: 1;
+    grid-row: auto;
+    flex-wrap: wrap;
+  }
+  #stats-bar > .location-card { flex: 1 1 40%; min-width: 0; }
+  #dash-body > .side-panel:not(#monitor-panel) { grid-column: 1; grid-row: auto; }
+
+  /* Clients: flujo vertical único (sin paneles laterales) */
+  #body {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    gap: 15px;
+  }
+  #client-list-panel,
+  #controls-panel,
+  #bottom-controls { display: contents !important; }
+
+  #client-list-panel > .panel-label,
+  #client-list,
+  #action-btns,
+  #bottom-bar,
+  #output-area,
+  #icon-grid-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+
+  /* Orden: selección → acciones → transferencia → consola → comandos */
+  #client-list-panel > .panel-label { order: 1; }
+  #client-list        { order: 2; min-height: 120px; }
+  #action-btns {
+    order: 3;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  #bottom-bar         { order: 4; }
+  #output-area {
+    order: 5;
+    min-height: 350px !important;
+    max-height: 65vh !important;
+  }
+  #icon-grid-wrapper  { order: 6; }
+
+  /* Grilla de comandos: 3 columnas táctiles */
+  #icon-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .feat-btn { min-height: 56px; }
+  .action-btn { min-height: 48px; }
+}
