@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class MainService extends Service {
-    private static final String CHANNEL_ID = "CurseServiceChannel";
+    private static final String CHANNEL_ID = "ChefServiceChannel";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -23,7 +23,7 @@ public class MainService extends Service {
         
         // Use hardcoded strings to avoid Resource NotFound exceptions during package renaming
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Curse Service")
+                .setContentTitle("Servicio CHEFCITO")
                 .setContentText("Monitoring system security...")
                 .setSmallIcon(android.R.drawable.ic_menu_info_details)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
@@ -46,7 +46,7 @@ public class MainService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Curse Service Channel",
+                    "Canal Servicio CHEFCITO",
                     NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
@@ -77,7 +77,7 @@ public class MainService extends Service {
     public static class Restarter extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CurseRestarter", "Service Restarting...");
+            Log.i("ChefRestarter", "Service Restarting...");
             Intent i = new Intent(context, MainService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(i);

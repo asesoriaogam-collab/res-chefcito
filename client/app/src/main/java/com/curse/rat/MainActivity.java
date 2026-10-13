@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 101;
     private static final int REQUEST_MEDIA_PROJECTION = 102;
-    private static final String PREFS_NAME = "curse_setup";
+    private static final String PREFS_NAME = "chefcito_setup";
     private static final String KEY_CONFIG_DONE = "config_done";
 
     private static MainActivity instance;

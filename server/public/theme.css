@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   CURSE RAT — panel-v2  |  theme.css
+   CHEFCITO — panel-v2  |  theme.css
    Diseño sobrio monocromo. Coral #e05661 SOLO estados de peligro.
    Éxito = verde #3fb950 · Aviso = ámbar #d29922 · Base = gris acero.
    Mobile-first: base móvil, >=768px tablet, >=1024px desktop.
@@ -84,7 +84,7 @@ body {
 .panel-title, .info-col-title, .tools-label, .sub-panel-title,
 #nav2-header, .title, #page-title, .stat-label, .deploy-btn,
 .build-btn, .form-action-btn, .form-label, .label, .tag-badge,
-#curse-title, #curse-title-wrap, .feat-tip, .bottom-btn, .action-btn {
+.feat-tip, .bottom-btn, .action-btn {
   font-family: var(--font-body);
 }
 

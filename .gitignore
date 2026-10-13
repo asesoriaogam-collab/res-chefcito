@@ -15,7 +15,7 @@ local.properties
 .idea/
 *.iml
 
-# Curse RAT Specific
+# CHEFCITO specific
 server/Downloads/
 server/output/
 server/workdir/
