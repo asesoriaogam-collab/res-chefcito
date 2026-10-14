@@ -103,7 +103,7 @@ El "Security Group" es la puerta de tu servidor: define qué conexiones se permi
 
 Notas:
 - En el campo **Origen**, la consola de AWS suele ofrecer la opción **"Mi IP"** en el desplegable: elegila y completa sola. Si no aparece, buscá en Google "cuál es mi IP" y escribila así: `190.45.123.7/32`.
-- ⚠️ **El puerto 3000 NO lo dejes abierto a todos (0.0.0.0/0)**: el panel no tiene contraseña, así que cualquiera que conozca tu IP podría entrar. Limitado a tu IP, solo tu navegador lo ve. Si tu IP de internet cambia (pasa en varias compañías), volvé a actualizar esa regla.
+- ⚠️ **El puerto 3000 NO lo dejes abierto a todos (0.0.0.0/0)**: el panel no tiene contraseña, así que cualquiera que conozca tu IP podría entrar. Limitado a tu IP, solo tu navegador lo ve. Si tu IP de internet cambia (pasa en varias compañías), volvé a actualizar esa regla. En el caso de que necesites acceder al panel desde cualquier lugar, si deberás abrir los puertos a todas las conexiones **(0.0.0.0/0)**, pero debes hacerlo bajo tu propia responsabilidad y entendiendo los riesgos de hacerlo
 - ⚠️ **El 22 mejor también a "Mi IP"** por la misma razón.
 - El **7777 sí va abierto a todos**: es donde se conectan los teléfonos (la IP de un celular cambia todo el tiempo).
 - El **8000 también va abierto a todos**: de ahí el teléfono descarga el APK por el navegador (PASO 11), y el teléfono puede estar en cualquier red. Si vas a descargar el APK siempre desde tu casa (misma conexión que tu compu), podés limitarlo a "Mi IP" para más seguridad; si algún día la descarga no anda desde el teléfono, revisá esa regla.
@@ -228,12 +228,6 @@ Deben aparecer dos rutas (`/usr/bin/jarsigner` y `/usr/bin/keytool` o similares)
 cd ~
 git clone https://github.com/asesoriaogam-collab/res-chefcito.git
 ```
-
-> ⚠️ Si `git clone` te pide usuario y contraseña, es porque el repositorio todavía está **privado**. Solución del administrador: hacerlo público (nota inicial de esta guía). Alternativa temporaria: clonar con un token de GitHub:
-> ```
-> git clone https://oauth2:TU_TOKEN@github.com/asesoriaogam-collab/res-chefcito.git
-> ```
-> (reemplazá TU_TOKEN por un token tuyo con permiso de lectura; y no lo compartas ni lo guardes: revocalo cuando termines).
 
 ### 7.2 Instalar las dependencias del servidor
 
