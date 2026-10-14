@@ -334,8 +334,6 @@ El `base.apk` es la aplicación "en blanco" sobre la cual el servidor genera la 
 | **C** | En tu PC con Linux (línea de comandos) | Media | Tenés Linux y preferís la terminal |
 | **D** | En tu PC con Windows (línea de comandos) | Media | Tenés Windows sin querer instalar Android Studio |
 
-> 💡 **Atajo sin compilar:** el repositorio hermano del proyecto (`control-parental-chefcito`) incluye en `server/base.apk` el mismo APK ya compilado. Si tenés acceso, descargalo de ahí, subilo al servidor (ANEXO A) saltando directo al PASO 10. Esta sección es para cuando querés generarlo vos.
-
 > En **todas** las opciones el resultado es el mismo archivo `app-debug.apk`, y todas terminan dejándolo en la ruta que espera el servidor: `~/res-chefcito/server/base.apk`. La primera compilación descarga cientos de MB de componentes y puede tardar bastante; las siguientes son rápidas.
 
 ---
