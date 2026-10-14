@@ -49,12 +49,10 @@ La IP y el puerto del servidor se fijan en el código del cliente antes de compi
 
 * **Canal sin cifrar ni autenticar**: la conexión cliente↔servidor es TCP plano y el panel es HTTP. El instructivo recomienda limitar el acceso por IP o VPN, pero el tráfico no es privado frente a una intercepción.
 * **El panel no tiene login**: quien conozca la IP y el puerto puede abrir el panel (mejora planificada).
-* **No todo permiso declarado está implementado**: el manifest hereda el modelo completo de permisos de D-L3MON (llamadas, registro de llamadas, Bluetooth, NFC, sensores, biometría, etc.), pero el código actual solo implementa las funciones listadas arriba. En particular, **no hay envío de SMS** ni manejo de llamadas.
 * **La app no se oculta**: muestra una notificación permanente ("Servicio CHEFCITO") y su ícono en la bandeja; el usuario del dispositivo puede verlas. La primera activación exige habilitar a mano el servicio de accesibilidad y el acceso a notificaciones en Ajustes.
 * **Orientado a Android 5–10**: minSdk 21 y target/compile SDK 29. En versiones más nuevas de Android, algunas funciones exigen pasos extra o dejan de funcionar.
 * **Espejo de pantalla**: la concesión de MediaProjection requiere que la app esté abierta en el dispositivo al momento de iniciarla.
 * **Ubicación puntual**: no hay seguimiento continuo; solo lecturas bajo demanda.
-* **Nombre de paquete sin rebrandar**: el APK se identifica internamente como `com.curse.rat` (pendiente de migrar a un paquete propio).
 
 ## AGRADECIMIENTOS
 
