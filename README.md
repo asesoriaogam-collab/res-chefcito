@@ -27,12 +27,20 @@ Sobre esa base, res-chefcito añade o cambia:
 * [Curse_Rat](https://github.com/thorthehacker/Curse_Rat) no incluye archivo de licencia; se le reconoce aquí como origen de la base de código.
 * Se agradece a los autores originales por compartir su trabajo con la comunidad de investigación en seguridad.
 
+
+
+
 ## AGRADECIMIENTOS
 
 Este proyecto no habría sido posible sin la inmensa ayuda de:
 * Mi Lenovo ThinkPad T430
 * hackerai.co 
+
 Yo puse la idea y ellos hicieron todo el trabajo
+
+
+
+
 
 ## ⚠️ Descargo de Responsabilidad (Disclaimer)
 
