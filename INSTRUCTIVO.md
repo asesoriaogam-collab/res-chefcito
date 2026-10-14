@@ -3,8 +3,7 @@ NOTA PARA EL ADMINISTRADOR (no se ve cuando la guía se lee renderizada):
 1) Esta guía asume que el repositorio res-chefcito es PÚBLICO. Antes de
    repartirla, hacerlo público: GitHub → repo → Settings → Danger Zone →
    Change visibility → Public. (Si queda privado, el PASO 7 falla para
-   cualquier persona que no tengas vos; existe la alternativa con token
-   que se explica ahí mismo.)
+   cualquier persona que no tengas vos.)
 2) El repositorio res-chefcito NO incluye el archivo base.apk (está
    excluido a propósito). Por eso esta guía tiene el PASO 9 con cuatro
    formas de compilarlo. Si algún día lo agregás al repo, el PASO 9
@@ -449,7 +448,7 @@ yes | sdkmanager --licenses
 sdkmanager "platforms;android-29" "build-tools;29.0.2" "platform-tools"
 ```
 
-3. Descargá el proyecto (botón **Code → Download ZIP** en GitHub, o `git clone`). El archivo `client/gradle.properties` ya viene portable (PASO 7.3): no necesita cambios.
+3. Descargá el proyecto (botón **Code → Download ZIP** en GitHub, o `git clone`). El archivo `client/gradle.properties` ya viene portable: no necesita cambios.
 
 4. Compilá:
 
@@ -494,7 +493,7 @@ sdkmanager "platforms;android-29" "build-tools;29.0.2" "platform-tools"
 
 (Los dos comandos sdkmanager tardan varios minutos; aceptá las licencias escribiendo `y` cuando pida.)
 
-4. Descargá el proyecto (botón **Code → Download ZIP** en GitHub) y descomprimilo. El archivo `client\gradle.properties` ya viene portable (PASO 7.3): no necesita cambios. (Si bajaste una copia vieja y ves una línea que empieza con `org.gradle.java.home=`, borrala con el Bloc de notas y guardá.)
+4. Descargá el proyecto (botón **Code → Download ZIP** en GitHub) y descomprimilo. El archivo `client\gradle.properties` ya viene portable: no necesita cambios. (Si bajaste una copia vieja y ves una línea que empieza con `org.gradle.java.home=`, borrala con el Bloc de notas y guardá.)
 
 5. Cerrá y abrí un CMD nuevo (para que valga la variable ANDROID_HOME), navegá a la carpeta `client` del proyecto y compilá:
 
@@ -617,7 +616,7 @@ En Linux/Mac, la misma sintaxis con las rutas de tu sistema (`scp -i ~/Downloads
 | El build del APK final falla al decodificar | Se instaló apktool 3.x | Reinstalá la 2.9.3 (PASO 6.4) |
 | `npm` dejó de existir después de un apt purge | Se purgaron paquetes de node | `sudo apt install -y nodejs npm` |
 | `zipalign: cannot execute binary file` | La instancia es Arm (t4g) | Recreá la instancia como c7i-flex.large x86 (PASO 2) y repetí del PASO 6 en más |
-| Compilación aborta con `Value 'C:\Users\...' given for org.gradle.java.home ... is invalid` | Se está usando una copia vieja del proyecto que todavía trae la ruta clavada en `client/gradle.properties` | Descargá el repositorio actualizado, o borrá esa línea (PASO 7.3, punto 2) |
+| Compilación aborta con `Value 'C:\Users\...' given for org.gradle.java.home ... is invalid` | Se está usando una copia vieja del proyecto que todavía trae la ruta clavada en `client/gradle.properties` | Descargá el repositorio actualizado, o borrá esa línea del archivo `client/gradle.properties` |
 | Compilación aborta con `SDK location not found` | Falta el SDK de Android o la variable ANDROID_HOME | Instalá el SDK (PASO 9, opción A/C/D) y definí ANDROID_HOME; en Android Studio no pasa (opción B) |
 | Compilación aborta con `Unsupported class file major version` | Se está compilando con un Java demasiado nuevo (17 o superior) | Usá Java 11: revisá `java -version`; en Android Studio, configurá "Gradle JDK" = 11 (PASO 9 opción B, punto 4) |
 | Compilación aborta con `Could not resolve com.android.tools.build:gradle` | Sin acceso a internet o red que bloquea la descarga | Probá con otra red; reintentá (la descarga continúa donde quedó) |
@@ -626,7 +625,7 @@ En Linux/Mac, la misma sintaxis con las rutas de tu sistema (`scp -i ~/Downloads
 | No puedo abrir el panel en el navegador | Puerto 3000 no abierto a tu IP, o servicio caído | Revisá el PASO 3; en el servidor: `systemctl status chefcito-panel --no-pager` |
 | El teléfono no aparece en el panel | Listener del 7777 caído, o la app no tiene permisos completos | En el servidor: `systemctl status chefcito-listener --no-pager`; en el teléfono: reabrí la app y revisá que los 4 permisos del wizard estén activos |
 | El APK no descarga desde el navegador | El servicio de descarga (puerto 8000) está caído, el APK todavía no se generó, o la IP está mal escrita | En el servidor: `systemctl status chefcito-apk --no-pager`; si falta el APK, repetí el PASO 10; verificá que la URL use TU_IP_ELASTICA real y termine en :8000 |
-| `git clone` pide usuario y contraseña | El repositorio está privado todavía | (Administrador: hacerlo público según la nota inicial) o clonar con token (PASO 7.1) |
+| `git clone` pide usuario y contraseña | El repositorio está privado todavía | (Administrador: hacerlo público según la nota inicial) |
 | Me cobraron algo en AWS | Elastic IP suelta, una instancia más grande que la de la guía, o recursos olvidados | Revisá Billing; liberá/quitá lo que no uses (ANEXO C) |
 | La app se cierra sola en el teléfono | Optimización de batería activa | Wizard → botón "Desactivar optimización de batería" |
 
