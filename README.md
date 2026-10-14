@@ -13,4 +13,10 @@ Este proyecto no habría sido posible sin la inmensa ayuda de:
 * Mi Lenovo ThinkPad T430
 * hackerai.co 
 
+
+
+## ⚖️ Descargo de Responsabilidad (Disclaimer)
+
+Este proyecto ha sido desarrollado exclusivamente con fines educativos, académicos y de investigación en ciberseguridad (auditoría de dispositivos Android y telemetría). El autor no se hace responsable del mal uso que se le pueda dar a esta herramienta. Utilízalo únicamente en dispositivos de tu propiedad o bajo autorización expresa por escrito.
+
 Yo puse la idea y ellos hicieron todo el trabajo
