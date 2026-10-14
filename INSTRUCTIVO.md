@@ -47,7 +47,14 @@ Esta guía te lleva de la mano, desde cero y sin conocimientos de informática, 
 
 ### ¿Cómo funciona lo "gratis" hoy? (importante)
 
-Las cuentas creadas a partir del **15 de julio de 2025** usan un modelo de **créditos**: tenés hasta **200 USD en créditos**, válidos por un máximo de **6 meses**. Mientras uses solo los recursos "aptos para el nivel gratuito" (Free tier eligible) que indica esta guía, no se te cobra nada: los consumos cubiertos no descuentan créditos.
+Las cuentas creadas a partir del **15 de julio de 2025** usan un modelo de **créditos**: tenés hasta **200 USD en créditos**, válidos por un máximo de **6 meses**. Durante ese tiempo podés elegir entre una mayor variedad de familias de instancias más modernas:
+
+- **t3.micro y t3.small** — de uso general (arquitectura x86 de Intel).
+- **t4g.micro y t4g.small** — eficientes, con procesadores AWS Graviton (arquitectura Arm).
+- **c7i-flex.large** — optimizadas para computación (**la que usa esta guía**).
+- **m7i-flex.large** — equilibradas de uso general, optimizadas.
+
+Mientras uses los recursos "aptos para el nivel gratuito" (Free tier eligible) que indica esta guía, no se te cobra nada: los consumos cubiertos no descuentan créditos. (Fuente: [documentación de AWS sobre el nivel gratuito de EC2](https://docs.aws.amazon.com/es_es/AWSEC2/latest/UserGuide/ec2-free-tier-usage.html).)
 
 **Reglas de oro:**
 - Elegí siempre recursos marcados como **"Free tier eligible"** (la guía te indica cuáles).
@@ -66,16 +73,16 @@ Las cuentas creadas a partir del **15 de julio de 2025** usan un modelo de **cr�
 |---|---|
 | **Name** | `chefcito-server` |
 | **Application and OS Images** | Pestaña **Quick Start** → **Ubuntu Server 24.04 LTS** (HVM), SSD Volume Type → **64-bit (x86)** |
-| **Instance type** | **t3.micro** (debe figurar "Free tier eligible") |
+| **Instance type** | **c7i-flex.large** (2 vCPU, 4 GB de RAM — Intel x86; incluida en el nuevo nivel gratuito, ver recuadro del PASO 1) |
 | **Key pair** | Creá uno nuevo: nombre `chefcito-key`, tipo **RSA**, formato **.pem** → **Create key pair** → se descarga un archivo. **Guardalo bien: no se puede volver a descargar.** |
 | **Network settings** | Dejá la VPC por defecto (con "Auto-assign public IP: Enable") → **Create security group** → nombre `chefcito-sg` |
 | **Storage** | Cambiá a **15 GiB** y tipo **gp3** |
 
-💡 **Si vas a compilar el `base.apk` en el VPS** (Opción A del PASO 9): elegí **t3.small** en vez de t3.micro — también es gratuita y tiene el doble de RAM (2 GB), con lo que la compilación va mucho más cómoda. Si vas a compilar en tu computadora (Opciones B, C o D), t3.micro alcanza de sobra.
+💡 La **c7i-flex.large** viene con 4 GB de RAM (el cuádruple que una t3.micro) y 2 vCPU: la compilación del APK en el VPS (Opción A del PASO 9) va cómoda y sin ajustes extra.
 
 ⚠️ **Dos errores que arruinan todo (verificados en pruebas reales):**
 - El Ubuntu debe ser el **x86 de 64 bits**, **NO** la versión Arm y **NO** ninguna que diga "with SQL Server". La versión Arm no puede ejecutar una herramienta del compilador y el build del APK falla siempre en el último paso.
-- La instancia debe ser **t3.micro o t3.small**. La t2.micro ya no es gratuita para cuentas nuevas; la t4g es Arm (mismo problema).
+- La instancia debe ser **c7i-flex.large** (está en la lista del recuadro del PASO 1). La t2.micro ya no es gratuita para cuentas nuevas; la t4g es Arm (mismo problema).
 
 4. Clic en **Launch instance** y esperá a que la instancia quede en estado **Running** con un círculo verde.
 
@@ -86,13 +93,14 @@ Las cuentas creadas a partir del **15 de julio de 2025** usan un modelo de **cr�
 El "Security Group" es la puerta de tu servidor: define qué conexiones se permiten.
 
 1. En el menú izquierdo de EC2: **Security Groups** → clic en `chefcito-sg`.
-2. Pestaña **Inbound rules** → **Edit inbound rules** → **Add rule** (repetí 3 veces):
+2. Pestaña **Inbound rules** → **Edit inbound rules** → **Add rule** (repetí 4 veces):
 
 | Tipo | Puerto | Origen (Source) | Para qué |
 |---|---|---|---|
 | SSH | 22 | **Mi IP** | Que vos te conectes al servidor |
 | Custom TCP | 3000 | **Mi IP** | Panel de control (solo tu navegador) |
 | Custom TCP | 7777 | **0.0.0.0/0** (Everywhere) | Conexión de los teléfonos |
+| Custom TCP | 8000 | **0.0.0.0/0** (Everywhere) | Descarga del APK por el navegador |
 
 3. **Save rules.**
 
@@ -101,7 +109,7 @@ Notas:
 - ⚠️ **El puerto 3000 NO lo dejes abierto a todos (0.0.0.0/0)**: el panel no tiene contraseña, así que cualquiera que conozca tu IP podría entrar. Limitado a tu IP, solo tu navegador lo ve. Si tu IP de internet cambia (pasa en varias compañías), volvé a actualizar esa regla.
 - ⚠️ **El 22 mejor también a "Mi IP"** por la misma razón.
 - El **7777 sí va abierto a todos**: es donde se conectan los teléfonos (la IP de un celular cambia todo el tiempo).
-- No hace falta abrir ningún puerto más (ni 8000 ni otros): el propio panel entrega el APK por el puerto 3000.
+- El **8000 también va abierto a todos**: de ahí el teléfono descarga el APK por el navegador (PASO 11), y el teléfono puede estar en cualquier red. Si vas a descargar el APK siempre desde tu casa (misma conexión que tu compu), podés limitarlo a "Mi IP" para más seguridad; si algún día la descarga no anda desde el teléfono, revisá esa regla.
 
 ---
 
@@ -298,20 +306,42 @@ WantedBy=multi-user.target
 EOF
 ```
 
-Ahora activá ambos servicios:
+Y este tercer bloque (crea el servicio que deja el APK descargable por el navegador). La primera línea crea la carpeta `output`: en un proyecto recién descargado todavía no existe (no viene en el repositorio) y el servicio la necesita para arrancar:
+
+```
+mkdir -p ~/res-chefcito/server/output
+sudo tee /etc/systemd/system/chefcito-apk.service > /dev/null <<'EOF'
+[Unit]
+Description=Chefcito - Descarga del APK (puerto 8000)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/res-chefcito/server/output
+ExecStart=/usr/bin/python3 -m http.server 8000 --bind 0.0.0.0
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Ahora activá los tres servicios:
 
 ```
 sudo systemctl daemon-reload
-sudo systemctl enable --now chefcito-panel chefcito-listener
+sudo systemctl enable --now chefcito-panel chefcito-listener chefcito-apk
 ```
 
-Verificá que los dos puertos estén escuchando:
+Verificá que los tres puertos estén escuchando:
 
 ```
-ss -tlnp | grep -E '3000|7777'
+ss -tlnp | grep -E '3000|7777|8000'
 ```
 
-Deben aparecer **dos líneas**: una con `:3000` y otra con `:7777`. Si aparecen, el servidor está listo y quedará encendido incluso si reiniciás la instancia.
+Deben aparecer **tres líneas**: una con `:3000`, otra con `:7777` y otra con `:8000`. Si aparecen, el servidor está listo y quedará encendido incluso si reiniciás la instancia.
 
 ---
 
@@ -334,7 +364,7 @@ El `base.apk` es la aplicación "en blanco" sobre la cual el servidor genera la 
 
 ### Opción A — Compilar en la VPS (línea de comandos Linux remota)
 
-Todo en la terminal del navegador del PASO 5. Si tu instancia es t3.micro (1 GB de RAM), primero agregamos memoria de intercambio (swap) para que la compilación no se muera:
+Todo en la terminal del navegador del PASO 5. La **c7i-flex.large** tiene 4 GB de RAM: alcanza para compilar sin ajustes. Solo si usaste una instancia más chica (ej. t3.micro, 1 GB), agregá primero memoria de intercambio (swap) para que la compilación no se muera:
 
 ```
 sudo fallocate -l 2G /swapfile
@@ -345,7 +375,7 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 free -h   # debe mostrar una línea Swap de ~2.0Gi
 ```
 
-Si tu instancia es t3.micro, limitá además la memoria que usa la compilación:
+En ese caso (instancia más chica), limitá además la memoria que usa la compilación:
 
 ```
 sed -i 's/-Xmx2048m/-Xmx1024m/' ~/res-chefcito/client/gradle.properties
@@ -378,7 +408,7 @@ sdkmanager "platforms;android-29" "build-tools;29.0.2" "platform-tools"
 
 (Instalación de unos 5-10 minutos.)
 
-Ahora compilá (⚠️ no cortes el proceso; en t3.micro puede tardar **20 a 40 minutos** la primera vez, y es normal que parezca "colgado" a veces):
+Ahora compilá (⚠️ no cortes el proceso; la primera vez puede tardar bastante —en una instancia chica, hasta **20 a 40 minutos**—, y es normal que parezca "colgado" a veces):
 
 ```
 cd ~/res-chefcito/client
@@ -393,7 +423,7 @@ cp ~/res-chefcito/client/app/build/outputs/apk/debug/app-debug.apk ~/res-chefcit
 ls -la ~/res-chefcito/server/base.apk   # debe pesar ~2 MB
 ```
 
-**Ventaja:** no instalaste nada en tu PC y el archivo ya quedó en su lugar. **Desventaja:** la compilación es lenta en una instancia chica.
+**Ventaja:** no instalaste nada en tu PC y el archivo ya quedó en su lugar. **Desventaja:** la compilación en la VPS es más lenta que en tu PC.
 
 ---
 
@@ -509,7 +539,25 @@ scp -i "C:\Users\TU_USUARIO\Downloads\chefcito-key.pem" app\build\outputs\apk\de
 
 ## PASO 10 — Generar el APK para el teléfono
 
-Este comando toma el `base.apk`, lo personaliza y lo deja listo para instalar. **Reemplazá TU_IP_ELASTICA por tu IP real** (la del PASO 4):
+Este paso toma el `base.apk`, lo personaliza con los datos de tu servidor y deja listo el archivo final **Chefcito.apk**. Tenés dos caminos: desde el **panel de control** (recomendado, con botones) o por **línea de comandos** (alternativa, para quienes prefieren la terminal).
+
+### Camino recomendado — sección DEPLOY del panel
+
+1. En tu computadora, abrí el panel de control: **http://TU_IP_ELASTICA:3000**
+2. En la barra lateral izquierda, tocá el icono del rayo: **DEPLOY**.
+3. Se abre la pantalla "DEPLOY_STATION" con dos campos:
+   - **TARGET_HOST_IP**: escribí tu IP fija (TU_IP_ELASTICA, la del PASO 4).
+   - **TARGET_PORT**: ya viene cargado con `7777`; dejalo así.
+4. Tocá el botón **INITIALIZE_BUILD** y esperá 1 a 2 minutos. En el recuadro de abajo el panel va mostrando el progreso (decompilar, parchear, firmar, alinear).
+5. Al terminar aparece **BUILD_COMPLETE** con el enlace **DOWNLOAD_PAYLOAD** (ese enlace también sirve para bajar el archivo a tu computadora). El APK ya quedó generado en el servidor como **Chefcito.apk**.
+
+### Camino opcional — sección BUILD APK (para personalizar la app)
+
+Si además querés personalizar la aplicación (nombre visible, versión, ícono, etc.), usá la sección **BUILD APK** de la misma barra lateral: es un formulario con más opciones (la IP y el puerto de conexión van al principio). Completá lo que quieras cambiar, tocá el botón final de build y esperá a que termine: el proceso por detrás es el mismo. Si no querés personalizar nada, usá directamente la sección DEPLOY de arriba.
+
+### Alternativa — línea de comandos
+
+Conectado al servidor (terminal del PASO 5), este comando hace lo mismo que el botón del panel. **Reemplazá TU_IP_ELASTICA por tu IP real** (la del PASO 4):
 
 ```
 cd ~/res-chefcito/server
@@ -525,30 +573,26 @@ Si todo va bien, al final verás algo como:
 --- SUCCESS: Chefcito.apk is ready ---
 ```
 
-(El proceso tarda 1 a 2 minutos.)
-
-### Descargar el APK a tu computadora
-
-1. En tu computadora, abrí el navegador y entrá a: **http://TU_IP_ELASTICA:3000/output/Chefcito.apk**
-2. Se descarga el archivo **Chefcito.apk**. Ese es el archivo que se instala en el teléfono.
-
-⚠️ Si algún día cambiás la IP del servidor, tenés que regenerar el APK con la IP nueva (el teléfono guarda la IP con la que fue generado). Por eso conviene la Elastic IP del PASO 4, que nunca cambia.
+⚠️ Sea cual sea el camino: si algún día cambiás la IP del servidor, tenés que regenerar el APK con la IP nueva (el teléfono guarda la IP con la que fue generado). Por eso conviene la Elastic IP del PASO 4, que nunca cambia.
 
 ---
 
-## PASO 11 — Instalar la aplicación en el teléfono
+## PASO 11 — Descargar e instalar la aplicación en el teléfono
 
-1. **Pasá el archivo Chefcito.apk al teléfono** (cable USB, WhatsApp adjuntándolo a "Mensaje a mí mismo", Google Drive, Bluetooth — cualquiera sirve).
-2. En el teléfono, abrí el archivo con el administrador de archivos. Android va a avisar que es una app de origen desconocido: aceptá **"Permitir instalar apps desconocidas"** para esa fuente (según la marca, está en Ajustes → Seguridad, o en Ajustes → Aplicaciones → Acceso especial → Instalar apps desconocidas). Es un paso normal para cualquier app que no venga de Play Store.
-3. Instalá y abrí la aplicación. La primera vez muestra una **pantalla de configuración inicial** con 4 botones. Completá los 4 en orden:
+1. En el **teléfono**, abrí el navegador (Chrome o el que tengas) y entrá a: **http://TU_IP_ELASTICA:8000/Chefcito.apk**
+2. El navegador va a avisar que "este tipo de archivo puede dañar el dispositivo": es el aviso estándar para cualquier APK que no venga de Play Store. Elegí **"Descargar de todos modos"** (o "Conservar", según el navegador).
+3. Cuando termine la descarga, abrí el archivo desde la notificación (o desde la carpeta **Descargas** con el administrador de archivos). Android va a pedir permiso para **instalar apps desconocidas** de esa fuente: aceptalo (según la marca, está en Ajustes → Seguridad, o en Ajustes → Aplicaciones → Acceso especial → Instalar apps desconocidas). Es un paso normal para cualquier app que no venga de Play Store.
+4. Instalá y abrí la aplicación. La primera vez muestra una **pantalla de configuración inicial** con 4 botones. Completá los 4 en orden:
    - **"Conceder permisos de la aplicación"** → activá todos los permisos que pida.
    - **"Activar servicio de accesibilidad"** → buscá la app en la lista y activalo (Android puede mostrar una advertencia; es normal para este tipo de servicio).
    - **"Permitir acceso a notificaciones"** → activá el acceso en la lista.
    - **"Desactivar optimización de batería"** → elegí "Permitir". Esto evita que Android cierre la app para ahorrar batería.
-4. Al completar los 4, la pantalla de configuración desaparece y se ve la **pantalla informativa**. La app ya está conectada al servidor.
-5. No hace falta dejar la app abierta: queda funcionando en segundo plano y se reengancha sola (incluso después de reiniciar el teléfono).
+5. Al completar los 4, la pantalla de configuración desaparece y se ve la **pantalla informativa**. La app ya está conectada al servidor.
+6. No hace falta dejar la app abierta: queda funcionando en segundo plano y se reengancha sola (incluso después de reiniciar el teléfono).
 
 Verificación rápida: en el panel del PASO 12, el dispositivo debe aparecer conectado.
+
+> Alternativa: también podés descargar el APK desde la computadora con la misma URL (http://TU_IP_ELASTICA:8000/Chefcito.apk) y pasarlo al teléfono por cable USB o como archivo.
 
 ---
 
@@ -596,18 +640,18 @@ En Linux/Mac, la misma sintaxis con las rutas de tu sistema (`scp -i ~/Downloads
 | `apktool --version` muestra un menú de ayuda | El lanzador quedó mal escrito (faltó el `"$@"`) | Repetí el bloque del PASO 6.4 copiándolo tal cual |
 | El build del APK final falla al decodificar | Se instaló apktool 3.x | Reinstalá la 2.9.3 (PASO 6.4) |
 | `npm` dejó de existir después de un apt purge | Se purgaron paquetes de node | `sudo apt install -y nodejs npm` |
-| `zipalign: cannot execute binary file` | La instancia es Arm (t4g) | Recreá la instancia como t3.micro/small x86 (PASO 2) y repetí del PASO 6 en más |
+| `zipalign: cannot execute binary file` | La instancia es Arm (t4g) | Recreá la instancia como c7i-flex.large x86 (PASO 2) y repetí del PASO 6 en más |
 | Compilación aborta con `Value 'C:\Users\...' given for org.gradle.java.home ... is invalid` | Se está usando una copia vieja del proyecto que todavía trae la ruta clavada en `client/gradle.properties` | Descargá el repositorio actualizado, o borrá esa línea (PASO 7.3, punto 2) |
 | Compilación aborta con `SDK location not found` | Falta el SDK de Android o la variable ANDROID_HOME | Instalá el SDK (PASO 9, opción A/C/D) y definí ANDROID_HOME; en Android Studio no pasa (opción B) |
 | Compilación aborta con `Unsupported class file major version` | Se está compilando con un Java demasiado nuevo (17 o superior) | Usá Java 11: revisá `java -version`; en Android Studio, configurá "Gradle JDK" = 11 (PASO 9 opción B, punto 4) |
 | Compilación aborta con `Could not resolve com.android.tools.build:gradle` | Sin acceso a internet o red que bloquea la descarga | Probá con otra red; reintentá (la descarga continúa donde quedó) |
-| Compilación se muere con `OutOfMemoryError` o `GC overhead limit exceeded` en la VPS | RAM insuficiente | Verificá el swap con `free -h` (Opción A, primer bloque); en t3.micro aplicá el `sed` que limita memoria; compilá con `--no-daemon` |
+| Compilación se muere con `OutOfMemoryError` o `GC overhead limit exceeded` en la VPS | RAM insuficiente (instancia más chica que la recomendada) | Aplicá el bloque de swap y el `sed` que limita memoria (Opción A del PASO 9); compilá con `--no-daemon` |
 | `gradlew: Permission denied` | Falta permiso de ejecución | `chmod +x gradlew` |
 | No puedo abrir el panel en el navegador | Puerto 3000 no abierto a tu IP, o servicio caído | Revisá el PASO 3; en el servidor: `systemctl status chefcito-panel --no-pager` |
 | El teléfono no aparece en el panel | Listener del 7777 caído, o la app no tiene permisos completos | En el servidor: `systemctl status chefcito-listener --no-pager`; en el teléfono: reabrí la app y revisá que los 4 permisos del wizard estén activos |
-| El APK no descarga desde el navegador | El servidor se reinició y falta regenerar, o IP mal escrita | Repetí el PASO 10; verificá que la URL use TU_IP_ELASTICA real |
+| El APK no descarga desde el navegador | El servicio de descarga (puerto 8000) está caído, el APK todavía no se generó, o la IP está mal escrita | En el servidor: `systemctl status chefcito-apk --no-pager`; si falta el APK, repetí el PASO 10; verificá que la URL use TU_IP_ELASTICA real y termine en :8000 |
 | `git clone` pide usuario y contraseña | El repositorio está privado todavía | (Administrador: hacerlo público según la nota inicial) o clonar con token (PASO 7.1) |
-| Me cobraron algo en AWS | Elastic IP suelta, instancia distinta a la de la guía, o recursos olvidados | Revisá Billing; liberá/quitá lo que no uses (ANEXO C) |
+| Me cobraron algo en AWS | Elastic IP suelta, una instancia más grande que la de la guía, o recursos olvidados | Revisá Billing; liberá/quitá lo que no uses (ANEXO C) |
 | La app se cierra sola en el teléfono | Optimización de batería activa | Wizard → botón "Desactivar optimización de batería" |
 
 ---
