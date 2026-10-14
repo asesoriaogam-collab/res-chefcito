@@ -1,8 +1,10 @@
-<img width="736" height="1308" alt="logo" src="https://github.com/user-attachments/assets/8ee1ecce-1def-4ce0-9dc0-d836d9c3986f" />
+# <p align="center">🐭 Chefcito</p>
 
-# Chefcito
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8ee1ecce-1def-4ce0-9dc0-d836d9c3986f" alt="logo" width="250">
+</p>
 
-## 📋 Descripción del repositorio
+## 📋 Descripción
 
 Chefcito es una herramienta de administración y monitoreo remoto de dispositivos Android para entornos de prueba propios. El repositorio contiene tres componentes que funcionan en conjunto:
 
@@ -11,6 +13,11 @@ Chefcito es una herramienta de administración y monitoreo remoto de dispositivo
 * **Panel de control web** (`server/public/`): la interfaz del operador, usable desde la compu o desde el navegador de un celular.
 
 La IP y el puerto del servidor se fijan en el código del cliente antes de compilar el APK (por defecto, puerto 7777).
+
+## 📋 Instalacion
+Los pasos detallados para el correcto funcionamiento del repositorio se encuentran en INSTRUCTIVO.md <p align="center">
+  <a href="INSTRUCTIVO.md">📖 <strong>Ir al Instructivo de Instalación</strong></a>
+</p>
 
 ### Funciones
 
