@@ -1,5 +1,13 @@
 # res-chefcito (Chefcito T.P.)
 
+## AGRADECIMIENTOS
+
+Este proyecto no habría sido posible sin la inmensa ayuda de:
+* Mi Lenovo ThinkPad T430
+* hackerai.co 
+
+Yo puse la idea y ellos hicieron todo el trabajo
+
 ## 🧬 Origen y cadena de derivación
 
 Este proyecto es una obra derivada en cadena de dos proyectos previos, y se documenta aquí la procedencia completa del código:
@@ -26,21 +34,6 @@ Sobre esa base, res-chefcito añade o cambia:
 * [D-L3MON](https://github.com/rootuserdj/D-L3MON) se distribuye bajo licencia **MIT**; este proyecto respeta y preserva su atribución.
 * [Curse_Rat](https://github.com/thorthehacker/Curse_Rat) no incluye archivo de licencia; se le reconoce aquí como origen de la base de código.
 * Se agradece a los autores originales por compartir su trabajo con la comunidad de investigación en seguridad.
-
-
-
-
-## AGRADECIMIENTOS
-
-Este proyecto no habría sido posible sin la inmensa ayuda de:
-* Mi Lenovo ThinkPad T430
-* hackerai.co 
-
-Yo puse la idea y ellos hicieron todo el trabajo
-
-
-
-
 
 ## ⚠️ Descargo de Responsabilidad (Disclaimer)
 
