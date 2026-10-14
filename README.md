@@ -1,3 +1,5 @@
+<img width="736" height="1308" alt="logo" src="https://github.com/user-attachments/assets/8ee1ecce-1def-4ce0-9dc0-d836d9c3986f" />
+
 # Chefcito
 
 ## 📋 Descripción del repositorio
