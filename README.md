@@ -1,8 +1,8 @@
-# res-chefcito (Chefcito T.P.)
+# Chefcito
 
 ## 📋 Descripción del repositorio
 
-Chefcito T.P. es una herramienta de administración y monitoreo remoto de dispositivos Android para entornos de prueba propios. El repositorio contiene tres componentes que funcionan en conjunto:
+Chefcito es una herramienta de administración y monitoreo remoto de dispositivos Android para entornos de prueba propios. El repositorio contiene tres componentes que funcionan en conjunto:
 
 * **Aplicación cliente Android** (`client/`): se instala en el dispositivo a administrar. Mantiene una conexión TCP permanente con el servidor, reporta actividad y recibe órdenes.
 * **Servidor central** (`server/`): aplicación Node.js que recibe las conexiones de los clientes en puertos de escucha configurables y sirve el panel web en el puerto 3000.
