@@ -238,19 +238,6 @@ npm install
 
 `npm install` tarda 1 a 3 minutos. Si termina sin mensajes rojos de error (warnings amarillos no importan), está bien.
 
-### 7.3 Verificar el archivo gradle.properties (ya viene corregido en el repositorio)
-
-El archivo `client/gradle.properties` del repositorio **ya viene portable**: no trae ninguna ruta de Java de una computadora en particular. Así, el compilador usa el Java del sistema (el 11 que instalaste en el PASO 6.3, o el que instales en tu PC en el PASO 9). Hacé esta verificación rápida:
-
-```
-nano ~/res-chefcito/client/gradle.properties
-```
-
-1. Confirmá que **NO exista** una línea que empiece con `org.gradle.java.home=`. Si no está (lo normal con el repositorio actualizado), no toques nada: salí con **Ctrl+X**.
-2. Si en cambio la ves (pasa con copias viejas del proyecto), borrala: ponete con el cursor en esa línea y cortala entera con **Ctrl+K** (repetilo si no se va de un corte). Guardá con **Ctrl+O**, Enter, y salí con **Ctrl+X**.
-
-⚠️ **No borres las otras líneas** del archivo (`android.useAndroidX=true`, etc.).
-
 ---
 
 ## PASO 8 — Dejar el servidor encendido para siempre
