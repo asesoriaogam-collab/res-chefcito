@@ -10,5 +10,6 @@ Agradecemos a los autores originales por compartir su conocimiento con la comuni
 ## AGRADECIMIENTOS
 
 Este proyecto no habría sido posible sin la inmensa ayuda de:
-Mi Lenovo ThinkPad T430 y hackerai.co 
+* Mi Lenovo ThinkPad T430
+* hackerai.co 
 Yo puse la idea y ellos hicieron todo el trabajo
