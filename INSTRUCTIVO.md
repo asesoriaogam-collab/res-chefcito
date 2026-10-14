@@ -24,9 +24,6 @@ Esta guía te lleva de la mano, desde cero y sin conocimientos de informática, 
 - **Tiempo total:** 60 a 120 minutos (según dónde compiles el `base.apk`, ver PASO 9).
 - **Necesitás:** una computadora con navegador, el teléfono Android a mano, y una tarjeta de crédito o débito para abrir la cuenta de AWS (no se te cobra si seguís la guía).
 - **Costo:** $0, usando el plan gratuito de AWS.
-
-> **Diferencia con la guía del otro repositorio:** el repo `res-chefcito` **no trae** el archivo `base.apk` ya compilado (se excluye a propósito del repositorio). Por eso esta guía tiene el **PASO 9**, donde elegís **una** de **cuatro formas** de generarlo: en la VPS, con Android Studio, o por línea de comandos en Linux o Windows. El resto de la guía es idéntica a la del proyecto hermano.
-
 > **Cómo leer esta guía:** cuando veas un recuadro gris con texto, es un **comando**. Copialo tal cual, pegalo en la terminal del servidor (aparece en el PASO 5) y presioná Enter. Todo lo que va después de un símbolo `#` en un comando es un comentario: no hace falta copiarlo.
 >
 > En toda la guía vas a ver el texto **TU_IP_ELASTICA**: reemplazalo siempre por la IP que vas a anotar en el PASO 4. Ejemplo: si tu IP es `54.210.33.7`, donde dice `TU_IP_ELASTICA` escribí `54.210.33.7`.
