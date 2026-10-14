@@ -215,7 +215,7 @@ Deben aparecer dos rutas (`/usr/bin/jarsigner` y `/usr/bin/keytool` o similares)
 
 ---
 
-## PASO 7 — Descargar el proyecto, instalar dependencias y acondicionarlo
+## PASO 7 — Descargar el proyecto, instalar dependencias y verificarlo
 
 ### 7.1 Descargar el repositorio
 
@@ -239,21 +239,18 @@ npm install
 
 `npm install` tarda 1 a 3 minutos. Si termina sin mensajes rojos de error (warnings amarillos no importan), está bien.
 
-### 7.3 Acondicionar el proyecto para TU máquina (⚠️ paso obligatorio antes de compilar)
+### 7.3 Verificar el archivo gradle.properties (ya viene corregido en el repositorio)
 
-El proyecto trae dentro una línea que apunta a una carpeta de Java de **la computadora donde se creó** (`C:\Users\Cliente\.jdks\...`). En cualquier otra máquina — incluido el VPS — esa carpeta no existe y el compilador aborta con un error. Hay que borrar esa línea:
+El archivo `client/gradle.properties` del repositorio **ya viene portable**: no trae ninguna ruta de Java de una computadora en particular. Así, el compilador usa el Java del sistema (el 11 que instalaste en el PASO 6.3, o el que instales en tu PC en el PASO 9). Hacé esta verificación rápida:
 
 ```
 nano ~/res-chefcito/client/gradle.properties
 ```
 
-1. Con las flechas del teclado bajá hasta la línea que empieza con `org.gradle.java.home=`.
-2. Cortala entera con **Ctrl+K** (si no se va entera de un corte, repetí Ctrl+K).
-3. Guardá con **Ctrl+O**, Enter, y salí con **Ctrl+X**.
+1. Confirmá que **NO exista** una línea que empiece con `org.gradle.java.home=`. Si no está (lo normal con el repositorio actualizado), no toques nada: salí con **Ctrl+X**.
+2. Si en cambio la ves (pasa con copias viejas del proyecto), borrala: ponete con el cursor en esa línea y cortala entera con **Ctrl+K** (repetilo si no se va de un corte). Guardá con **Ctrl+O**, Enter, y salí con **Ctrl+X**.
 
-⚠️ **No borres las otras líneas** del archivo (`android.useAndroidX=true`, etc.): solo esa. Con la línea fuera, el compilador usa el Java del sistema (el 11 que instalaste en el PASO 6.3 o el que instales en tu PC en el PASO 9).
-
-> Curiosidad útil: la primera compilación de tu propia PC (donde esa línea sí funcionaba) es la razón de que exista. Este paso deja el proyecto "portable" para cualquiera.
+⚠️ **No borres las otras líneas** del archivo (`android.useAndroidX=true`, etc.).
 
 ---
 
@@ -446,7 +443,7 @@ yes | sdkmanager --licenses
 sdkmanager "platforms;android-29" "build-tools;29.0.2" "platform-tools"
 ```
 
-3. Descargá el proyecto (botón **Code → Download ZIP** en GitHub, o `git clone`) y acondicioná el archivo según el PASO 7.3 (borrar la línea `org.gradle.java.home=`).
+3. Descargá el proyecto (botón **Code → Download ZIP** en GitHub, o `git clone`). El archivo `client/gradle.properties` ya viene portable (PASO 7.3): no necesita cambios.
 
 4. Compilá:
 
@@ -491,7 +488,7 @@ sdkmanager "platforms;android-29" "build-tools;29.0.2" "platform-tools"
 
 (Los dos comandos sdkmanager tardan varios minutos; aceptá las licencias escribiendo `y` cuando pida.)
 
-4. Descargá el proyecto (botón **Code → Download ZIP** en GitHub) y descomprimilo. **Acondicioná** el archivo `client\gradle.properties` con el Bloc de notas: borrale la línea que empieza con `org.gradle.java.home=` y guardalo (mismo motivo que el PASO 7.3).
+4. Descargá el proyecto (botón **Code → Download ZIP** en GitHub) y descomprimilo. El archivo `client\gradle.properties` ya viene portable (PASO 7.3): no necesita cambios. (Si bajaste una copia vieja y ves una línea que empieza con `org.gradle.java.home=`, borrala con el Bloc de notas y guardá.)
 
 5. Cerrá y abrí un CMD nuevo (para que valga la variable ANDROID_HOME), navegá a la carpeta `client` del proyecto y compilá:
 
@@ -600,7 +597,7 @@ En Linux/Mac, la misma sintaxis con las rutas de tu sistema (`scp -i ~/Downloads
 | El build del APK final falla al decodificar | Se instaló apktool 3.x | Reinstalá la 2.9.3 (PASO 6.4) |
 | `npm` dejó de existir después de un apt purge | Se purgaron paquetes de node | `sudo apt install -y nodejs npm` |
 | `zipalign: cannot execute binary file` | La instancia es Arm (t4g) | Recreá la instancia como t3.micro/small x86 (PASO 2) y repetí del PASO 6 en más |
-| Compilación aborta con `Value 'C:\Users\...' given for org.gradle.java.home ... is invalid` | No se borró (o se borró mal) la línea del `gradle.properties` | Hacé el PASO 7.3 (o el punto 4 de la Opción D) de nuevo |
+| Compilación aborta con `Value 'C:\Users\...' given for org.gradle.java.home ... is invalid` | Se está usando una copia vieja del proyecto que todavía trae la ruta clavada en `client/gradle.properties` | Descargá el repositorio actualizado, o borrá esa línea (PASO 7.3, punto 2) |
 | Compilación aborta con `SDK location not found` | Falta el SDK de Android o la variable ANDROID_HOME | Instalá el SDK (PASO 9, opción A/C/D) y definí ANDROID_HOME; en Android Studio no pasa (opción B) |
 | Compilación aborta con `Unsupported class file major version` | Se está compilando con un Java demasiado nuevo (17 o superior) | Usá Java 11: revisá `java -version`; en Android Studio, configurá "Gradle JDK" = 11 (PASO 9 opción B, punto 4) |
 | Compilación aborta con `Could not resolve com.android.tools.build:gradle` | Sin acceso a internet o red que bloquea la descarga | Probá con otra red; reintentá (la descarga continúa donde quedó) |
